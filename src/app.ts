@@ -1,9 +1,10 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
-const app = express();
+import init from "./routes";
 
+const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -13,9 +14,7 @@ app.use(
   })
 );
 
-app.get("/", (req: Request, res: Response) => {
-  const word: string = "World";
-  res.send(`Hello ${word}`);
-});
+init(app);
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => console.log("Server is running on port", PORT));
