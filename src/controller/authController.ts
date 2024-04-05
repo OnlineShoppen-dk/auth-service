@@ -40,7 +40,12 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     const userDto: UserDto = mapUserToDto(registeredUser);
-    return res.status(200).send({msg: "User has been created succesfully", user_details: userDto});
+    return res
+      .status(200)
+      .send({
+        msg: "User has been created succesfully",
+        user_details: userDto,
+      });
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).send({ error: "Internal server error" });
