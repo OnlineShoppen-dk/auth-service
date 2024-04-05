@@ -1,6 +1,13 @@
-// gather all routes here and combine them and call this file inside app.ts
+import { Application } from "express";
+import authRouter from "./authRouter";
 
 
-export function init(){
-    // authRouter()
-}
+const router = (app: Application) => {
+  app.use("/api/auth", authRouter);
+};
+
+const init = (app: Application) => {
+  router(app);
+};
+
+export default init;
