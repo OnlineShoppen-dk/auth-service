@@ -1,0 +1,37 @@
+name: auth-service-test
+
+on: 
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch: { 
+    inputs: { 
+      branch: { required: true, description: "Branch to test", default: "master"} 
+    } 
+  }
+
+jobs:
+    tester:
+      runs-on: ubuntu-latest
+      strategy:
+        matrix:
+          node-version: [16.x]
+      steps:
+        - uses: actions/checkout@v2
+        - name: Echo
+          run: 
+            echo Testing 
+
+    check_npm:
+       runs-on: ubuntu-latest
+       strategy:
+         matrix:
+           node-version: [18.x]
+       steps:
+        - uses: actions/checkout@v2
+        - name: install dependencies
+          run: npm install
+        - name: run tests
+          run: npm test
+  
