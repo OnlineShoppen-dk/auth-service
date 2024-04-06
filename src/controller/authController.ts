@@ -103,8 +103,14 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
+export const logout = async (req: Request, res: Response) => {
+  res.clearCookie("token");
+  res.clearCookie("refreshToken");
+  return res.status(200).send({ msg: "User has been logged out succesfully" });
+}
+
 export const checkCookies = async (req: Request, res: Response) => {
-  res.send({ cookies: req.cookies });
+  res.send({ cookies: {access_token:req.cookies.token, refresh_token: req.cookies.refreshToken} });
 };
 
 export const authCheck = async (req: UserRequest, res: Response) => {
