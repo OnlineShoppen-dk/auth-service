@@ -12,23 +12,13 @@ on:
   }
 
 jobs:
-    tester:
+    install-dependencies:
       runs-on: ubuntu-latest
       strategy:
         matrix:
-          node-version: [16.x]
+          node-version: [18.x]
       steps:
         - uses: actions/checkout@v2
-        - name: Echo
+        - name: installing node dependencies
           run: 
-            echo Testing 
-
-    check_npm:
-       runs-on: ubuntu-latest
-       strategy:
-         matrix:
-           node-version: [18.x]
-       steps:
-        - uses: actions/checkout@v2
-        - name: install dependencies
-          run: npm install
+            npm install 
