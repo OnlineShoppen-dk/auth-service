@@ -6,6 +6,8 @@ import { formatErrorMessage, validateUser } from "../schema/user";
 import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
+import { generateToken } from "../utils/jwt";
+import {  UserRequest } from "../middleware/jwtMiddleware";
 
 const prisma = new PrismaClient();
 
@@ -40,14 +42,90 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     const userDto: UserDto = mapUserToDto(registeredUser);
-    return res
-      .status(200)
-      .send({
-        msg: "User has been created succesfully",
-        user_details: userDto,
-      });
+    return res.status(200).send({
+      msg: "User has been created succesfully",
+      user_details: userDto,
+    });
   } catch (error) {
     console.error("Error registering user:", error);
     res.status(500).send({ error: "Internal server error" });
+  }
+};
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const user: User = req.body;
+    const validatedUser = validateUser(user);
+
+    if (validatedUser instanceof Error) {
+      const errorMessage = formatErrorMessage(validatedUser.message);
+      return res.status(400).send({ error: errorMessage });
+    }
+
+    const existingUser = await prisma.user.findUnique({
+      where: {
+        email: user.email,
+      },
+    });
+    if (!existingUser) {
+      return res.status(404).send({ msg: "User not found" });
+    }
+
+    const isPasswordValid = await bcrypt.compare(
+      user.password,
+      existingUser.password
+    );
+    if (!isPasswordValid) {
+      return res.status(401).send({ msg: "Invalid password" });
+    }
+
+    const userDto: UserDto = mapUserToDto(existingUser);
+    const accessToken = generateToken(existingUser.guid, "10s");
+    const refreshToken = generateToken(existingUser.guid, "7d");
+
+    res.cookie("token", accessToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 10 * 1000),
+    });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    return res.status(200).send({
+      msg: "User has been logged in succesfully",
+      user_details: userDto,
+      user_jwt_token_guid: existingUser.guid
+    });
+  } catch (error) {
+    console.error("Error logging in user:", error);
+    res.status(500).send({ error: "Internal server error" });
+  }
+};
+
+export const checkCookies = async (req: Request, res: Response) => {
+  res.send({ cookies: req.cookies });
+};
+
+export const authCheck = async (req: UserRequest, res: Response) => {
+  try {
+    const user_guid = req.user_guid;
+
+    const user = await prisma.user.findUnique({
+      where: {
+        guid: user_guid,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const userDto: UserDto = mapUserToDto(user);
+
+    return res.status(200).json({ user_details: userDto });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
