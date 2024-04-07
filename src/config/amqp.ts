@@ -22,7 +22,12 @@ export async function sendToQueue(userDto: UserDto) {
   try {
     const message = JSON.stringify(userDto);
     channel?.sendToQueue(queueName, Buffer.from(message));
-    console.log(`User registration message sent to queue: ${queueName}`);
+    channel?.consume(queueName, (msg) => {
+      if (msg) {
+        console.log('Message received from queue:', msg.content.toString());
+      }
+    }
+  )
   } catch (error) {
     console.error('Error sending message to queue:', error);
   }
