@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import "dotenv/config";
 import init from "./routes";
 
-const app = express();
+export const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
