@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../utils/jwt";
 import {  UserRequest } from "../middleware/jwtMiddleware";
+import {  consumeFromQueue, sendToQueue } from "../config/amqp";
 
 const prisma = new PrismaClient();
 
@@ -42,6 +43,10 @@ export const registerUser = async (req: Request, res: Response) => {
     });
 
     const userDto: UserDto = mapUserToDto(registeredUser);
+    sendToQueue(userDto);
+    const consume = await consumeFromQueue();
+    console.log("consume", consume);
+    
     return res.status(200).send({
       msg: "User has been created succesfully",
       user_details: userDto,
