@@ -1,18 +1,8 @@
 import express from "express";
-import cors from "cors";
-import cookieParser from "cookie-parser";
 import "dotenv/config";
 import init from "./bootstrap/init";
 
 const app = express();
-app.use(express.json());
-app.use(cookieParser());
-app.use(
-  cors({
-    origin: true,
-    credentials: true,
-  })
-);
 
 init(app);
 

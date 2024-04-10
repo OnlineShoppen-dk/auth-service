@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { User } from "@prisma/client";
+import  { User } from "@prisma/client";
 import { UserDto } from "../dto/userDto";
 import { mapUserToDto } from "../factory/dtoMapper";
 import { formatErrorMessage, validateUser } from "../schema/user";
@@ -112,7 +112,7 @@ export const logout = async (req: Request, res: Response) => {
 }
 
 export const checkCookies = async (req: Request, res: Response) => {
-  res.send({ cookies: {access_token:req.cookies.token, refresh_token: req.cookies.refreshToken} });
+  res.send({ cookies: {access_token:req.cookies.token, refresh_token: req.cookies.refreshToken}});
 };
 
 export const authCheck = async (req: UserRequest, res: Response) => {
