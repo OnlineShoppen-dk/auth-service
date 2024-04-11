@@ -9,6 +9,9 @@ import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../utils/jwt";
 import {  UserRequest } from "../middleware/jwtMiddleware";
 import {  sendToQueue } from "../config/amqp";
+import * as os from 'os'
+
+const hostname = os.hostname()
 
 const prisma = new PrismaClient();
 
@@ -114,6 +117,10 @@ export const logout = async (req: Request, res: Response) => {
 export const checkCookies = async (req: Request, res: Response) => {
   res.send({ cookies: {access_token:req.cookies.token, refresh_token: req.cookies.refreshToken}});
 };
+
+export const host = async (req: Request, res: Response) => {
+  res.send({host: hostname})
+}
 
 export const authCheck = async (req: UserRequest, res: Response) => {
   try {
