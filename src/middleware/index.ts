@@ -20,7 +20,7 @@ const middlewares = (app: Application) => {
     ["/api/auth/login", "/api/auth/register"],
     rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 2,
+      max: 30,
     })
   );
 

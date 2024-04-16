@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  auth:
+    build: .
+    ports: 
+       - 8080
+    environment:
+     DATABASE_URL: mysql://user:test12@db:3306/prismadb
+    depends_on:
+      - db
+      - amqp
+  db:
+    image: mysql:latest
+    container_name: prismadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test12
+      MYSQL_DATABASE: prismadb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: test12
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  amqp:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: test 
+      RABBITMQ_DEFAULT_PASS: test  
+    env_file:
+      - fileName.env
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./conf:/etc/nginx/conf.d
+    depends_on:
+      - auth
+    ports:
+      - 80:80

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import  { User } from "@prisma/client";
+import { User } from "@prisma/client";
 import { UserDto } from "../dto/userDto";
 import { mapUserToDto } from "../factory/dtoMapper";
 import { formatErrorMessage, validateUser } from "../schema/user";
@@ -7,11 +7,11 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../utils/jwt";
-import {  UserRequest } from "../middleware/jwtMiddleware";
-import {  sendToQueue } from "../config/amqp";
-import * as os from 'os'
+import { UserRequest } from "../middleware/jwtMiddleware";
+import { sendToQueue } from "../config/amqp";
+import * as os from "os";
 
-const hostname = os.hostname()
+const hostname = os.hostname();
 
 const prisma = new PrismaClient();
 
@@ -36,7 +36,6 @@ export const registerUser = async (req: Request, res: Response) => {
         .status(409)
         .send({ msg: "An account already exists with this email" });
     }
-
     const registeredUser = await prisma.user.create({
       data: {
         email: user.email,
@@ -100,7 +99,7 @@ export const login = async (req: Request, res: Response) => {
     return res.status(200).send({
       msg: "User has been logged in succesfully",
       user_details: userDto,
-      user_jwt_token_guid: existingUser.guid
+      user_jwt_token_guid: existingUser.guid,
     });
   } catch (error) {
     console.error("Error logging in user:", error);
@@ -112,15 +111,20 @@ export const logout = async (req: Request, res: Response) => {
   res.clearCookie("token");
   res.clearCookie("refreshToken");
   return res.status(200).send({ msg: "User has been logged out succesfully" });
-}
+};
 
 export const checkCookies = async (req: Request, res: Response) => {
-  res.send({ cookies: {access_token:req.cookies.token, refresh_token: req.cookies.refreshToken}});
+  res.send({
+    cookies: {
+      access_token: req.cookies.token,
+      refresh_token: req.cookies.refreshToken,
+    },
+  });
 };
 
 export const host = async (req: Request, res: Response) => {
-  res.send({host: hostname})
-}
+  res.send({ host: hostname });
+};
 
 export const authCheck = async (req: UserRequest, res: Response) => {
   try {

@@ -113,6 +113,9 @@ dist
 # FuseBox cache
 .fusebox/
 
+#database volume
+mysql
+
 # DynamoDB Local files
 .dynamodb/
 
