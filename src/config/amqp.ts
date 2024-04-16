@@ -20,7 +20,12 @@ export async function amqp_setup() {
 
 export async function sendToQueue(userDto: UserDto) {
   try {
-    const message = JSON.stringify(userDto);
+    const message = JSON.stringify({
+      Email: userDto.email, 
+      Subject: "Registration Successful!",
+      Body: `Hello ${userDto.email}. You have been registered successfully with role ${userDto.role}!`
+    });
+    
     channel?.sendToQueue(queueName, Buffer.from(message));
     channel?.consume(queueName, (msg) => {
       if (msg) {
