@@ -3,7 +3,6 @@ import { User } from "@prisma/client";
 import { UserDto } from "../dto/userDto";
 import { mapUserToDto } from "../factory/dtoMapper";
 import { formatErrorMessage, validateUser } from "../schema/user";
-import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../utils/jwt";
@@ -16,7 +15,6 @@ const hostname = os.hostname();
 const prisma = new PrismaClient();
 
 export const registerUser = async (req: Request, res: Response) => {
-  const guid = randomUUID();
   try {
     const user: User = req.body;
     const validatedUser = validateUser(user);
@@ -40,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
       data: {
         email: user.email,
         password: hashedPassword,
-        guid: guid,
+        guid: user.guid,
       },
     });
 
