@@ -96,8 +96,7 @@ export const login = async (req: Request, res: Response) => {
 
     return res.status(200).send({
       msg: "User has been logged in succesfully",
-      user_details: userDto,
-      user_jwt_token_guid: existingUser.guid,
+      user_details: userDto
     });
   } catch (error) {
     console.error("Error logging in user:", error);
