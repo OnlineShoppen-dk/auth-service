@@ -82,12 +82,12 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const userDto: UserDto = mapUserToDto(existingUser);
-    const accessToken = generateToken(existingUser.guid, "10s");
+    const accessToken = generateToken(existingUser.guid, "15m");
     const refreshToken = generateToken(existingUser.guid, "7d");
 
     res.cookie("token", accessToken, {
       httpOnly: true,
-      expires: new Date(Date.now() + 10 * 1000),
+      expires: new Date(Date.now() + 1000 * 1000),
     });
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
