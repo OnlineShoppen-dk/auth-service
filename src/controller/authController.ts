@@ -29,7 +29,7 @@ export const registerUser = async (req: Request, res: Response) => {
         email: user.email,
       },
     });
-    if (existingUser instanceof Error) {
+    if (existingUser) {
       return res
         .status(409)
         .send({ msg: "An account already exists with this email" });
