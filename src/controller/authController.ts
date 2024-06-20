@@ -70,7 +70,7 @@ export const login = async (req: Request, res: Response) => {
       },
     });
     if (!existingUser) {
-      return res.status(404).send({ msg: "User not found" });
+      return res.status(404).send({ msg: "Wrong credentials" });
     }
 
     const isPasswordValid = await bcrypt.compare(
@@ -78,7 +78,7 @@ export const login = async (req: Request, res: Response) => {
       existingUser.password
     );
     if (!isPasswordValid) {
-      return res.status(401).send({ msg: "Invalid password" });
+      return res.status(401).send({ msg: "Wrong credentials" });
     }
 
     const userDto: UserDto = mapUserToDto(existingUser);
